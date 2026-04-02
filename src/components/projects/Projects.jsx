@@ -5,6 +5,7 @@ import AddMemberModal from './AddMemberModal';
 import projectService from '../../services/projectService';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';  // Add FiFolder here
+import { useTheme } from '../../context/ThemeContext';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
