@@ -1,41 +1,3 @@
-// import React from 'react';
-// import { FiFolder, FiCheckCircle, FiClock, FiList } from 'react-icons/fi';
-
-// const icons = {
-//   projects: FiFolder,
-//   tasks: FiList,
-//   completed: FiCheckCircle,
-//   pending: FiClock,
-// };
-
-// const colors = {
-//   projects: 'bg-blue-500',
-//   tasks: 'bg-purple-500',
-//   completed: 'bg-green-500',
-//   pending: 'bg-orange-500',
-// };
-
-// const StatsCard = ({ title, value, type }) => {
-//   const Icon = icons[type];
-//   const color = colors[type];
-
-//   return (
-//     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-//       <div className="flex items-center justify-between">
-//         <div>
-//           <p className="text-sm font-medium text-gray-600">{title}</p>
-//           <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
-//         </div>
-//         <div className={`${color} p-3 rounded-full`}>
-//           <Icon className="h-6 w-6 text-white" />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default StatsCard;
-
 import React from 'react';
 import { FiFolder, FiCheckCircle, FiClock, FiList } from 'react-icons/fi';
 
@@ -58,7 +20,7 @@ const StatsCard = ({ title, value, type }) => {
   const gradient = gradients[type];
 
   return (
-    <div className="card group hover:scale-105">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:scale-[1.02] group">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
