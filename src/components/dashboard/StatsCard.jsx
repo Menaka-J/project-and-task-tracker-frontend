@@ -20,14 +20,26 @@ const StatsCard = ({ title, value, type }) => {
   const gradient = gradients[type];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:scale-[1.02] group">
-      <div className="flex items-center justify-between">
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '1rem',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+      padding: '1.5rem',
+      transition: 'all 0.3s',
+      border: '1px solid #e5e7eb'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{value}</p>
+          <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6b7280' }}>{title}</p>
+          <p style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginTop: '0.5rem' }}>{value}</p>
         </div>
-        <div className={`bg-gradient-to-br ${gradient} p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-          <Icon className="h-6 w-6 text-white" />
+        <div style={{
+          background: `linear-gradient(to bottom right, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`,
+          padding: '0.75rem',
+          borderRadius: '1rem',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+        }}>
+          <Icon style={{ height: '1.5rem', width: '1.5rem', color: 'white' }} />
         </div>
       </div>
     </div>
