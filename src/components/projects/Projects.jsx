@@ -17,6 +17,7 @@ const Projects = () => {
   const [users, setUsers] = useState([]);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user?.role?.includes('ADMIN');
+  const { darkMode } = useTheme();
 
   const fetchProjects = async () => {
     try {
