@@ -68,28 +68,6 @@ const Projects = () => {
     }
   };
 
-  const handleDeleteProject = async (projectId) => {
-    if (window.confirm('Are you sure you want to delete this project? All tasks will also be deleted. This action cannot be undone.')) {
-      try {
-        await projectService.deleteProject(projectId);
-        fetchProjects();
-      } catch (err) {
-        alert('Failed to delete project');
-      }
-    }
-  };
-
-  const handleRemoveMember = async (projectId, userId) => {
-    if (window.confirm('Are you sure you want to remove this member from the project?')) {
-      try {
-        await projectService.removeMember(projectId, userId);
-        fetchProjects();
-      } catch (err) {
-        alert('Failed to remove member');
-      }
-    }
-  };
-
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -106,11 +84,7 @@ const Projects = () => {
         {isAdmin && (
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-xl ${
-              darkMode 
-                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
-                : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-            }`}
+            className="btn-primary flex items-center gap-2"
           >
             <FiPlus className="h-5 w-5" />
             New Project
@@ -122,7 +96,7 @@ const Projects = () => {
         <div className={`px-4 py-3 rounded-xl ${
           darkMode 
             ? 'bg-red-900/20 border border-red-700 text-red-400' 
-            : 'bg-red-50 border border-red-200 text-red-600'
+            : 'bg-red-50 border border-red-400 text-red-700'
         }`}>
           {error}
         </div>
@@ -144,11 +118,7 @@ const Projects = () => {
           {isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className={`mt-4 px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
-                  : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-              }`}
+              className="btn-primary mt-4"
             >
               Create Project
             </button>
@@ -165,8 +135,6 @@ const Projects = () => {
                 setSelectedProject(project);
                 setIsMemberModalOpen(true);
               }}
-              onDeleteProject={handleDeleteProject}
-              onRemoveMember={handleRemoveMember}
             />
           ))}
         </div>

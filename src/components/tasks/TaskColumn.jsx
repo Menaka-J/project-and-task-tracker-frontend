@@ -5,7 +5,7 @@ import TaskCard from './TaskCard';
 import { useTheme } from '../../context/ThemeContext';
 import { FiInbox } from 'react-icons/fi';
 
-const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, onDeleteTask, color, isAdmin }) => {
+const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, color }) => {
   const { setNodeRef } = useDroppable({ id: status });
   const { darkMode } = useTheme();
 
@@ -80,10 +80,8 @@ const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, onDeleteTask, co
               key={task.id}
               task={task}
               onUpdateStatus={onUpdateStatus}
-              onDeleteTask={onDeleteTask}
               nextStatus={getNextStatus()}
               prevStatus={getPrevStatus()}
-              isAdmin={isAdmin}
             />
           ))}
           

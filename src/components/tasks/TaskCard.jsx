@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FiUser, FiCalendar, FiArrowRight, FiArrowLeft, FiAlertCircle, FiFlag, FiTrash2 } from 'react-icons/fi';
+import React from 'react';
+import { FiUser, FiCalendar, FiArrowRight, FiArrowLeft, FiAlertCircle, FiFlag } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
 
 const priorityColors = {
@@ -23,9 +23,8 @@ const priorityColors = {
   }
 };
 
-const TaskCard = ({ task, onUpdateStatus, onDeleteTask, nextStatus, prevStatus, isAdmin }) => {
+const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
   const { darkMode } = useTheme();
-  const [showConfirm, setShowConfirm] = useState(false);
   const priority = task.priority || 'MEDIUM';
   const priorityStyle = priorityColors[priority];
   
@@ -53,16 +52,6 @@ const TaskCard = ({ task, onUpdateStatus, onDeleteTask, nextStatus, prevStatus, 
 
   const dueDateStatus = getDueDateStatus();
 
-  const handleDelete = () => {
-    if (showConfirm) {
-      onDeleteTask(task.id);
-      setShowConfirm(false);
-    } else {
-      setShowConfirm(true);
-      setTimeout(() => setShowConfirm(false), 3000);
-    }
-  };
-
   return (
     <div className={`rounded-xl shadow-sm hover:shadow-md transition-all p-4 ${getStatusColor()} ${
       darkMode ? 'bg-gray-800' : 'bg-white'
@@ -73,29 +62,12 @@ const TaskCard = ({ task, onUpdateStatus, onDeleteTask, nextStatus, prevStatus, 
           <FiFlag className={`h-3 w-3 ${priorityStyle.icon}`} />
           <span className={`text-xs font-bold ${priorityStyle.text}`}>{priority}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {dueDateStatus && (
-            <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${dueDateStatus.bg}`}>
-              <FiAlertCircle className={`h-3 w-3 ${dueDateStatus.color.split(' ')[0]}`} />
-              <span className={`text-xs font-bold ${dueDateStatus.color}`}>{dueDateStatus.text}</span>
-            </div>
-          )}
-          {isAdmin && (
-            <button
-              onClick={handleDelete}
-              className={`p-1 rounded-lg transition-colors ${
-                showConfirm 
-                  ? 'bg-red-500 text-white' 
-                  : darkMode 
-                    ? 'text-gray-400 hover:text-red-400 hover:bg-gray-700' 
-                    : 'text-gray-400 hover:text-red-600 hover:bg-gray-100'
-              }`}
-              title="Delete task"
-            >
-              <FiTrash2 className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+        {dueDateStatus && (
+          <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${dueDateStatus.bg}`}>
+            <FiAlertCircle className={`h-3 w-3 ${dueDateStatus.color.split(' ')[0]}`} />
+            <span className={`text-xs font-bold ${dueDateStatus.color}`}>{dueDateStatus.text}</span>
+          </div>
+        )}
       </div>
       
       <h3 className={`font-semibold mb-2 line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -152,14 +124,6 @@ const TaskCard = ({ task, onUpdateStatus, onDeleteTask, nextStatus, prevStatus, 
           </button>
         )}
       </div>
-      
-      {showConfirm && (
-        <div className="mt-3 text-center">
-          <p className={`text-xs ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-            Click again to confirm delete
-          </p>
-        </div>
-      )}
     </div>
   );
 };

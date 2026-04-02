@@ -14,7 +14,7 @@ const TaskBoard = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectIdFromUrl = queryParams.get('projectId');
-  
+
   const [tasks, setTasks] = useState({ TO_DO: [], IN_PROGRESS: [], DONE: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,10 +25,10 @@ const TaskBoard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user?.role?.includes('ADMIN');
-  const { darkMode } = useTheme();
+  const { darkMode } = useTheme(); // <-- Make sure this is here!
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -63,27 +63,31 @@ const TaskBoard = () => {
 
   const fetchTasks = async () => {
     if (!selectedProjectId) return;
-    
+
     try {
       setLoading(true);
       const data = await taskService.getTasksByProject(selectedProjectId);
-      
+
+      // Filter tasks based on user role
       let filteredTasks = data;
       if (!isAdmin) {
+        // Members only see tasks assigned to them
         filteredTasks = data.filter(task => task.assignee?.id === user.id);
       }
-      
+
+      // Apply search filter
       if (searchTerm) {
-        filteredTasks = filteredTasks.filter(task => 
+        filteredTasks = filteredTasks.filter(task =>
           task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
-      
+
+      // Apply priority filter
       if (filterPriority) {
         filteredTasks = filteredTasks.filter(task => task.priority === filterPriority);
       }
-      
+
       const grouped = {
         TO_DO: filteredTasks.filter(task => task.status === 'TO_DO'),
         IN_PROGRESS: filteredTasks.filter(task => task.status === 'IN_PROGRESS'),
@@ -110,26 +114,26 @@ const TaskBoard = () => {
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-    
+
     if (!over) return;
-    
+
     const activeId = active.id;
     const newStatus = over.id;
-    
+
     let taskToUpdate = null;
     for (const status in tasks) {
       taskToUpdate = tasks[status].find(t => t.id === activeId);
       if (taskToUpdate) break;
     }
-    
+
     if (taskToUpdate && taskToUpdate.status !== newStatus) {
       try {
         await taskService.updateTaskStatus(activeId, newStatus);
-        
+
         if (newStatus === 'DONE') {
           triggerConfetti();
         }
-        
+
         fetchTasks();
       } catch (err) {
         alert('Failed to update task status');
@@ -140,25 +144,14 @@ const TaskBoard = () => {
   const handleUpdateStatus = async (taskId, newStatus) => {
     try {
       await taskService.updateTaskStatus(taskId, newStatus);
-      
+
       if (newStatus === 'DONE') {
         triggerConfetti();
       }
-      
+
       fetchTasks();
     } catch (err) {
       alert('Failed to update task status');
-    }
-  };
-
-  const handleDeleteTask = async (taskId) => {
-    if (window.confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
-      try {
-        await taskService.deleteTask(taskId);
-        fetchTasks();
-      } catch (err) {
-        alert('Failed to delete task');
-      }
     }
   };
 
@@ -177,9 +170,10 @@ const TaskBoard = () => {
     setFilterPriority('');
   };
 
-  const hasNoTasks = !isAdmin && 
-    tasks.TO_DO.length === 0 && 
-    tasks.IN_PROGRESS.length === 0 && 
+  // Check if user has any tasks
+  const hasNoTasks = !isAdmin &&
+    tasks.TO_DO.length === 0 &&
+    tasks.IN_PROGRESS.length === 0 &&
     tasks.DONE.length === 0;
 
   if (loading && projects.length === 0) return <LoadingSpinner />;
@@ -197,16 +191,15 @@ const TaskBoard = () => {
             {isAdmin ? 'Drag and drop tasks to update status' : 'View and manage your assigned tasks'}
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className={`px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${
-              darkMode 
-                ? 'bg-gray-800 border-gray-700 text-white focus:ring-purple-500' 
+            className={`px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${darkMode
+                ? 'bg-gray-800 border-gray-700 text-white focus:ring-purple-500'
                 : 'bg-white border-gray-300 text-gray-900 focus:ring-purple-500'
-            }`}
+              }`}
           >
             <option value="">Select Project</option>
             {projects.map(project => (
@@ -215,30 +208,22 @@ const TaskBoard = () => {
               </option>
             ))}
           </select>
-          
+
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-              darkMode 
-                ? 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className="btn-secondary flex items-center gap-2"
           >
             <FiFilter className="h-4 w-4" />
             Filters
             {(searchTerm || filterPriority) && (
-              <span className="ml-1 w-2 h-2 bg-purple-500 rounded-full"></span>
+              <span className="ml-1 w-2 h-2 bg-blue-500 rounded-full"></span>
             )}
           </button>
-          
+
           {selectedProjectId && isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
-                  : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-              }`}
+              className="btn-primary flex items-center gap-2"
             >
               <FiPlus className="h-5 w-5" />
               Add Task
@@ -247,10 +232,10 @@ const TaskBoard = () => {
         </div>
       </div>
 
+      {/* Search and Filters */}
       {showFilters && (
-        <div className={`p-4 rounded-xl transition-all duration-300 ${
-          darkMode ? 'bg-gray-800' : 'bg-gray-50'
-        } animate-slide-up`}>
+        <div className={`p-4 rounded-xl transition-all duration-300 ${darkMode ? 'bg-gray-800' : 'bg-gray-50'
+          } animate-slide-up`}>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <FiSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
@@ -259,22 +244,20 @@ const TaskBoard = () => {
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${
-                  darkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-purple-500' 
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-purple-500'
-                }`}
+                className={`w-full pl-10 pr-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${darkMode
+                  ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-purple-500'
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-purple-500'
+                  }`}
               />
             </div>
             <div className="w-48">
               <select
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
-                className={`w-full px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${
-                  darkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white focus:ring-purple-500' 
-                    : 'bg-white border-gray-300 text-gray-900 focus:ring-purple-500'
-                }`}
+                className={`w-full px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none transition-all ${darkMode
+                  ? 'bg-gray-700 border-gray-600 text-white focus:ring-purple-500'
+                  : 'bg-white border-gray-300 text-gray-900 focus:ring-purple-500'
+                  }`}
               >
                 <option value="">All Priorities</option>
                 <option value="HIGH">🔴 High Priority</option>
@@ -285,11 +268,10 @@ const TaskBoard = () => {
             {(searchTerm || filterPriority) && (
               <button
                 onClick={clearFilters}
-                className={`px-4 py-2 rounded-xl transition-colors flex items-center gap-2 ${
-                  darkMode 
-                    ? 'text-gray-300 hover:text-red-400 hover:bg-gray-700' 
-                    : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 rounded-xl transition-colors flex items-center gap-2 ${darkMode
+                  ? 'text-gray-300 hover:text-red-400 hover:bg-gray-700'
+                  : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'
+                  }`}
               >
                 <FiX className="h-4 w-4" />
                 Clear
@@ -300,20 +282,15 @@ const TaskBoard = () => {
       )}
 
       {error && (
-        <div className={`px-4 py-3 rounded-xl ${
-          darkMode 
-            ? 'bg-red-900/20 border border-red-700 text-red-400' 
-            : 'bg-red-50 border border-red-200 text-red-600'
-        }`}>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl">
           {error}
         </div>
       )}
 
       {!selectedProjectId ? (
         <div className="text-center py-12">
-          <div className={`rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center ${
-            darkMode ? 'bg-gray-800' : 'bg-gray-100'
-          }`}>
+          <div className={`rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center ${darkMode ? 'bg-gray-800' : 'bg-gray-100'
+            }`}>
             <FiInbox className={`h-10 w-10 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
           </div>
           <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -324,23 +301,22 @@ const TaskBoard = () => {
           </p>
         </div>
       ) : hasNoTasks ? (
+        // No Tasks Message for Members
         <div className="text-center py-16 animate-fade-in">
-          <div className={`rounded-full p-6 w-32 h-32 mx-auto mb-6 flex items-center justify-center ${
-            darkMode ? 'bg-gray-800' : 'bg-gray-100'
-          }`}>
+          <div className={`rounded-full p-6 w-32 h-32 mx-auto mb-6 flex items-center justify-center ${darkMode ? 'bg-gray-800' : 'bg-gray-100'
+            }`}>
             <FiSmile className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
           </div>
           <h3 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
             No Tasks Assigned Yet! 🎉
           </h3>
           <p className={`text-lg mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            You don't have any tasks in <span className="font-semibold text-purple-600 dark:text-purple-400">{currentProject?.name}</span>
+            You don't have any tasks in <span className="font-semibold text-indigo-600 dark:text-indigo-400">{currentProject?.name}</span>
           </p>
-          <div className={`max-w-md mx-auto p-4 rounded-xl ${
-            darkMode ? 'bg-gray-800/50' : 'bg-purple-50'
-          }`}>
+          <div className={`max-w-md mx-auto p-4 rounded-xl ${darkMode ? 'bg-gray-800/50' : 'bg-indigo-50'
+            }`}>
             <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              💡 When tasks are assigned to you, they will appear here. 
+              💡 When tasks are assigned to you, they will appear here.
               You can then drag them between columns as you make progress!
             </p>
           </div>
@@ -358,9 +334,7 @@ const TaskBoard = () => {
               status="TO_DO"
               tasks={tasks.TO_DO}
               onUpdateStatus={handleUpdateStatus}
-              onDeleteTask={handleDeleteTask}
               color="blue"
-              isAdmin={isAdmin}
             />
             <TaskColumn
               id="IN_PROGRESS"
@@ -368,9 +342,7 @@ const TaskBoard = () => {
               status="IN_PROGRESS"
               tasks={tasks.IN_PROGRESS}
               onUpdateStatus={handleUpdateStatus}
-              onDeleteTask={handleDeleteTask}
               color="yellow"
-              isAdmin={isAdmin}
             />
             <TaskColumn
               id="DONE"
@@ -378,9 +350,7 @@ const TaskBoard = () => {
               status="DONE"
               tasks={tasks.DONE}
               onUpdateStatus={handleUpdateStatus}
-              onDeleteTask={handleDeleteTask}
               color="green"
-              isAdmin={isAdmin}
             />
           </div>
         </DndContext>

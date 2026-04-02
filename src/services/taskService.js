@@ -32,11 +32,6 @@ const taskService = {
     return response.data;
   },
 
-  // Add delete task method
-  deleteTask: async (taskId) => {
-    const response = await api.delete(`/tasks/${taskId}`);
-    return response.data;
-  },
   
 };
 
