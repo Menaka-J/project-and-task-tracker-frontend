@@ -29,10 +29,10 @@ const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, color }) => {
 
   const getBadgeClass = () => {
     switch(color) {
-      case 'blue': return 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300';
-      case 'yellow': return 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300';
-      case 'green': return 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300';
-      default: return 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300';
+      case 'blue': return 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
+      case 'yellow': return 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
+      case 'green': return 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300';
+      default: return 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
     }
   };
 
