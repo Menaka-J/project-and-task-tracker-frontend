@@ -8,15 +8,13 @@ const ProjectCard = ({ project, isAdmin, onAddMember }) => {
   const { darkMode } = useTheme();
 
   return (
-    <div className={`card group hover:scale-[1.02] transition-all duration-300 ${
-      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
-    }`}>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:scale-[1.02] group">
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-lg font-semibold mb-1 text-gray-900 dark:text-white`}>
             {project.name}
           </h3>
-          <p className={`text-sm line-clamp-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`text-sm line-clamp-2 text-gray-600 dark:text-gray-400`}>
             {project.description || 'No description'}
           </p>
         </div>
@@ -28,12 +26,12 @@ const ProjectCard = ({ project, isAdmin, onAddMember }) => {
       </div>
 
       <div className="space-y-3">
-        <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        <div className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400`}>
           <FiUsers className="h-4 w-4" />
           <span>{project.members?.length || 1} members</span>
         </div>
 
-        <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        <div className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400`}>
           <FiCalendar className="h-4 w-4" />
           <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
         </div>
@@ -41,7 +39,7 @@ const ProjectCard = ({ project, isAdmin, onAddMember }) => {
         <div className="flex flex-wrap gap-2 pt-2">
           <button
             onClick={() => navigate(`/tasks?projectId=${project.id}`)}
-            className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
           >
             View Tasks
             <FiChevronRight className="h-4 w-4" />
