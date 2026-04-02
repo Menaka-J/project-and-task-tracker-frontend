@@ -363,7 +363,7 @@ const TaskBoard = () => {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold gradient-text">Task Board</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Drag and drop tasks to update status</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1"></p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
