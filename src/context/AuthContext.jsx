@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    isAuthenticated: authService.isAuthenticated(),
+    isAuthenticated: !!localStorage.getItem('token'),
     loading,
   };
 
