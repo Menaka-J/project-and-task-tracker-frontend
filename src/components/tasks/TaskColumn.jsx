@@ -74,30 +74,17 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import TaskCard from './TaskCard';
 
-const colors = {
-  blue: {
-    bg: 'bg-blue-50 dark:bg-blue-900/20',
-    border: 'border-blue-200 dark:border-blue-800',
-    text: 'text-blue-700 dark:text-blue-400',
-    badge: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300'
-  },
-  yellow: {
-    bg: 'bg-yellow-50 dark:bg-yellow-900/20',
-    border: 'border-yellow-200 dark:border-yellow-800',
-    text: 'text-yellow-700 dark:text-yellow-400',
-    badge: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300'
-  },
-  green: {
-    bg: 'bg-green-50 dark:bg-green-900/20',
-    border: 'border-green-200 dark:border-green-800',
-    text: 'text-green-700 dark:text-green-400',
-    badge: 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300'
-  }
-};
-
 const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, color }) => {
-  const colorStyles = colors[color];
   const { setNodeRef } = useDroppable({ id: status });
+
+  const getColumnClass = () => {
+    switch(color) {
+      case 'blue': return 'task-column-blue';
+      case 'yellow': return 'task-column-yellow';
+      case 'green': return 'task-column-green';
+      default: return 'task-column-blue';
+    }
+  };
 
   const getNextStatus = () => {
     if (status === 'TO_DO') return 'IN_PROGRESS';
@@ -112,10 +99,10 @@ const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, color }) => {
   };
 
   return (
-    <div ref={setNodeRef} className={`${colorStyles.bg} rounded-xl p-4 min-h-[500px]`}>
+    <div ref={setNodeRef} className={`task-column ${getColumnClass()}`}>
       <div className="flex justify-between items-center mb-4">
-        <h2 className={`font-semibold text-lg ${colorStyles.text}`}>{title}</h2>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorStyles.badge}`}>
+        <h2 className="font-semibold text-lg">{title}</h2>
+        <span className="badge">
           {tasks.length} tasks
         </span>
       </div>
