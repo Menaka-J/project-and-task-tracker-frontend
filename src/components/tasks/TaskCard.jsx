@@ -101,7 +101,7 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         {nextStatus && (
           <button
             onClick={() => onUpdateStatus(task.id, nextStatus)}
-            className="flex-1 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1"
+            className="flex-1 px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center justify-center gap-1"
           >
             {task.status === 'TO_DO' ? 'Start' : task.status === 'IN_PROGRESS' ? 'Complete' : 'Move'}
             <FiArrowRight className="h-3 w-3" />
