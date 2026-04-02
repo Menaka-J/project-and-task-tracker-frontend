@@ -1,64 +1,91 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiUsers, FiCalendar, FiChevronRight, FiUserPlus } from 'react-icons/fi';
-import { useTheme } from '../../context/ThemeContext';
 
 const ProjectCard = ({ project, isAdmin, onAddMember }) => {
   const navigate = useNavigate();
-  const { darkMode } = useTheme();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:scale-[1.02] group">
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '1rem',
+      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+      padding: '1.5rem',
+      transition: 'all 0.3s',
+      border: '1px solid #e5e7eb'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.25rem', color: '#111827' }}>
             {project.name}
           </h3>
-          <p className="text-sm line-clamp-2 text-gray-600 dark:text-gray-400">
+          <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
             {project.description || 'No description'}
           </p>
         </div>
-        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-2 py-1 ml-2">
-          <span className="text-xs font-medium text-blue-700 dark:text-blue-400">
+        <div style={{ backgroundColor: '#dbeafe', borderRadius: '9999px', padding: '0.25rem 0.5rem', marginLeft: '0.5rem' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: '500', color: '#1d4ed8' }}>
             {project.totalTasks || 0} tasks
           </span>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-          <FiUsers className="h-4 w-4" />
+      <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#4b5563', marginBottom: '0.5rem' }}>
+          <FiUsers style={{ height: '1rem', width: '1rem' }} />
           <span>{project.members?.length || 1} members</span>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-          <FiCalendar className="h-4 w-4" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#4b5563' }}>
+          <FiCalendar style={{ height: '1rem', width: '1rem' }} />
           <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
         </div>
+      </div>
 
-        <div className="flex flex-wrap gap-2 pt-2">
+      <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem' }}>
+        <button
+          onClick={() => navigate(`/tasks?projectId=${project.id}`)}
+          style={{
+            flex: 1,
+            backgroundColor: '#4f46e5',
+            color: 'white',
+            padding: '0.5rem 0.75rem',
+            borderRadius: '0.5rem',
+            border: 'none',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
+          }}
+        >
+          View Tasks
+          <FiChevronRight style={{ height: '1rem', width: '1rem' }} />
+        </button>
+        
+        {isAdmin && (
           <button
-            onClick={() => navigate(`/tasks?projectId=${project.id}`)}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            onClick={onAddMember}
+            style={{
+              padding: '0.5rem 0.75rem',
+              backgroundColor: 'transparent',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              color: '#374151',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
           >
-            View Tasks
-            <FiChevronRight className="h-4 w-4" />
+            <FiUserPlus style={{ height: '1rem', width: '1rem' }} />
+            Add Member
           </button>
-          
-          {isAdmin && (
-            <button
-              onClick={onAddMember}
-              className={`px-3 py-2 border rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2 ${
-                darkMode 
-                  ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <FiUserPlus className="h-4 w-4" />
-              Add Member
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
