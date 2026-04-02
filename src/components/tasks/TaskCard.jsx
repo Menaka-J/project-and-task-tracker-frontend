@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiUser, FiCalendar, FiArrowRight, FiArrowLeft, FiAlertCircle, FiFlag } from 'react-icons/fi';
+import { useTheme } from '../../context/ThemeContext';
 
 const priorityColors = {
   HIGH: {
@@ -23,6 +24,7 @@ const priorityColors = {
 };
 
 const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
+  const { darkMode } = useTheme();
   const priority = task.priority || 'MEDIUM';
   const priorityStyle = priorityColors[priority];
   
@@ -51,7 +53,9 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
   const dueDateStatus = getDueDateStatus();
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all p-4 ${getStatusColor()}`}>
+    <div className={`rounded-xl shadow-sm hover:shadow-md transition-all p-4 ${getStatusColor()} ${
+      darkMode ? 'bg-gray-800' : 'bg-white'
+    } border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
       {/* Priority Badge */}
       <div className="flex items-center justify-between mb-3">
         <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${priorityStyle.bg}`}>
@@ -66,12 +70,16 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         )}
       </div>
       
-      <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">{task.title}</h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{task.description}</p>
+      <h3 className={`font-semibold mb-2 line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+        {task.title}
+      </h3>
+      <p className={`text-sm mb-3 line-clamp-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        {task.description}
+      </p>
       
       <div className="space-y-2 mb-3">
         {task.assignee && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             <FiUser className="h-4 w-4" />
             <span>{task.assignee.name}</span>
           </div>
@@ -80,7 +88,7 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         {task.deadline && (
           <div className="flex items-center gap-2 text-sm">
             <FiCalendar className="h-4 w-4" />
-            <span className={dueDateStatus?.color || 'text-gray-600 dark:text-gray-400'}>
+            <span className={dueDateStatus?.color || (darkMode ? 'text-gray-400' : 'text-gray-600')}>
               Due: {new Date(task.deadline).toLocaleDateString()}
             </span>
           </div>
@@ -91,7 +99,11 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         {prevStatus && (
           <button
             onClick={() => onUpdateStatus(task.id, prevStatus)}
-            className="flex-1 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-1"
+            className={`flex-1 px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center justify-center gap-1 ${
+              darkMode 
+                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
           >
             <FiArrowLeft className="h-3 w-3" />
             Previous
@@ -101,7 +113,11 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         {nextStatus && (
           <button
             onClick={() => onUpdateStatus(task.id, nextStatus)}
-            className="flex-1 px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center justify-center gap-1"
+            className={`flex-1 px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center justify-center gap-1 shadow-md ${
+              darkMode 
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
+                : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+            }`}
           >
             {task.status === 'TO_DO' ? 'Start' : task.status === 'IN_PROGRESS' ? 'Complete' : 'Move'}
             <FiArrowRight className="h-3 w-3" />
