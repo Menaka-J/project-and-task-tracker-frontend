@@ -4,7 +4,7 @@ import CreateProjectModal from './CreateProjectModal';
 import AddMemberModal from './AddMemberModal';
 import projectService from '../../services/projectService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { FiPlus, FiUsers } from 'react-icons/fi';
+import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';  // Add FiFolder here
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -69,7 +69,7 @@ const Projects = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="p-6">
+    <div className="p-6 animate-fade-in">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>

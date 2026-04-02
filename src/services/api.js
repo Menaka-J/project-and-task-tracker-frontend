@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Make sure this points to your backend
 const API_BASE_URL = 'http://localhost:8080/api';
 
 const api = axios.create({
@@ -13,9 +14,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('Token from localStorage:', token); // Debug log
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('Making request to:', config.url); // Debug log
     return config;
   },
   (error) => {
@@ -25,8 +28,12 @@ api.interceptors.request.use(
 
 // Handle response errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response received:', response.data); // Debug log
+    return response;
+  },
   (error) => {
+    console.error('API Error:', error.response?.data || error.message);
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
