@@ -239,7 +239,7 @@ const TaskBoard = () => {
         const data = await projectService.getAllUsers();
         setUsers(data);
       } catch (err) {
-        console.error('Failed to load users');
+        console.error('Failed to load users',err);
       }
     }
   };

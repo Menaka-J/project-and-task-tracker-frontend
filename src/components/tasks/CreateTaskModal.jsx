@@ -126,7 +126,7 @@
 // export default CreateTaskModal;
 
 import React, { useState } from 'react';
-import { FiX, FiPlusCircle, FiUser, FiFlag } from 'react-icons/fi';
+import { FiX, FiPlusCircle, FiFlag } from 'react-icons/fi';
 
 const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
   const [title, setTitle] = useState('');
@@ -141,13 +141,27 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
     if (!title.trim() || !assigneeId) return;
     
     setLoading(true);
-    await onCreate({ title, description, assigneeId, deadline, priority });
-    setLoading(false);
-    setTitle('');
-    setDescription('');
-    setAssigneeId('');
-    setDeadline('');
-    setPriority('MEDIUM');
+    try {
+      await onCreate({ 
+        title, 
+        description, 
+        assigneeId, 
+        deadline, 
+        priority  // Make sure priority is sent
+      });
+      // Reset form
+      setTitle('');
+      setDescription('');
+      setAssigneeId('');
+      setDeadline('');
+      setPriority('MEDIUM');
+      onClose();
+    } catch (err) {
+      console.error('Error creating task:', err);
+      alert('Failed to create task');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -160,7 +174,13 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
             <FiPlusCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create New Task</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <button 
+            onClick={() => {
+              onClose();
+              setPriority('MEDIUM');
+            }} 
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
             <FiX className="h-6 w-6" />
           </button>
         </div>
@@ -204,27 +224,42 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
               Priority
             </label>
             <div className="flex gap-3">
-              {['HIGH', 'MEDIUM', 'LOW'].map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setPriority(p)}
-                  className={`flex-1 py-2 rounded-lg font-medium transition-all ${
-                    priority === p
-                      ? p === 'HIGH'
-                        ? 'bg-red-500 text-white'
-                        : p === 'MEDIUM'
-                        ? 'bg-yellow-500 text-white'
-                        : 'bg-green-500 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-1">
-                    <FiFlag className="h-3 w-3" />
-                    {p}
-                  </div>
-                </button>
-              ))}
+              <button
+                type="button"
+                onClick={() => setPriority('HIGH')}
+                className={`flex-1 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                  priority === 'HIGH'
+                    ? 'bg-red-500 text-white shadow-md'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FiFlag className="h-4 w-4" />
+                High
+              </button>
+              <button
+                type="button"
+                onClick={() => setPriority('MEDIUM')}
+                className={`flex-1 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                  priority === 'MEDIUM'
+                    ? 'bg-yellow-500 text-white shadow-md'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FiFlag className="h-4 w-4" />
+                Medium
+              </button>
+              <button
+                type="button"
+                onClick={() => setPriority('LOW')}
+                className={`flex-1 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                  priority === 'LOW'
+                    ? 'bg-green-500 text-white shadow-md'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FiFlag className="h-4 w-4" />
+                Low
+              </button>
             </div>
           </div>
 
@@ -239,7 +274,7 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
               required
             >
               <option value="">Select assignee...</option>
-              {users.map((user) => (
+              {users && users.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.name} ({user.email})
                 </option>
@@ -262,7 +297,10 @@ const CreateTaskModal = ({ isOpen, onClose, onCreate, users, projectName }) => {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                setPriority('MEDIUM');
+              }}
               className="flex-1 btn-secondary"
             >
               Cancel
