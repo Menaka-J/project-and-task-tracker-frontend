@@ -11,28 +11,44 @@ const TaskColumn = ({ id, title, status, tasks, onUpdateStatus, color }) => {
 
   const getColumnClass = () => {
     switch(color) {
-      case 'blue': return 'bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800';
-      case 'yellow': return 'bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800';
-      case 'green': return 'bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800';
-      default: return 'bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800';
+      case 'blue': return darkMode 
+        ? 'bg-blue-950/30 border border-blue-800' 
+        : 'bg-blue-50 border border-blue-200';
+      case 'yellow': return darkMode 
+        ? 'bg-amber-950/30 border border-amber-800' 
+        : 'bg-amber-50 border border-amber-200';
+      case 'green': return darkMode 
+        ? 'bg-emerald-950/30 border border-emerald-800' 
+        : 'bg-emerald-50 border border-emerald-200';
+      default: return darkMode 
+        ? 'bg-blue-950/30 border border-blue-800' 
+        : 'bg-blue-50 border border-blue-200';
     }
   };
 
   const getTitleColor = () => {
     switch(color) {
-      case 'blue': return 'text-blue-700 dark:text-blue-400';
-      case 'yellow': return 'text-amber-700 dark:text-amber-400';
-      case 'green': return 'text-emerald-700 dark:text-emerald-400';
-      default: return 'text-blue-700 dark:text-blue-400';
+      case 'blue': return darkMode ? 'text-blue-400' : 'text-blue-700';
+      case 'yellow': return darkMode ? 'text-amber-400' : 'text-amber-700';
+      case 'green': return darkMode ? 'text-emerald-400' : 'text-emerald-700';
+      default: return darkMode ? 'text-blue-400' : 'text-blue-700';
     }
   };
 
   const getBadgeClass = () => {
     switch(color) {
-      case 'blue': return 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
-      case 'yellow': return 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300';
-      case 'green': return 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300';
-      default: return 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300';
+      case 'blue': return darkMode 
+        ? 'bg-blue-900/40 text-blue-300' 
+        : 'bg-blue-100 text-blue-700';
+      case 'yellow': return darkMode 
+        ? 'bg-amber-900/40 text-amber-300' 
+        : 'bg-amber-100 text-amber-700';
+      case 'green': return darkMode 
+        ? 'bg-emerald-900/40 text-emerald-300' 
+        : 'bg-emerald-100 text-emerald-700';
+      default: return darkMode 
+        ? 'bg-blue-900/40 text-blue-300' 
+        : 'bg-blue-100 text-blue-700';
     }
   };
 

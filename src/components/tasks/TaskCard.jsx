@@ -5,19 +5,19 @@ import { useTheme } from '../../context/ThemeContext';
 const priorityColors = {
   HIGH: {
     bg: 'bg-red-100 dark:bg-red-900/30',
-    text: 'text-red-700 dark:text-red-400',
+    text: 'text-red-700 dark:text-red-400 font-bold',
     border: 'border-red-500',
     icon: 'text-red-500'
   },
   MEDIUM: {
     bg: 'bg-yellow-100 dark:bg-yellow-900/30',
-    text: 'text-yellow-700 dark:text-yellow-400',
+    text: 'text-yellow-700 dark:text-yellow-400 font-bold',
     border: 'border-yellow-500',
     icon: 'text-yellow-500'
   },
   LOW: {
     bg: 'bg-green-100 dark:bg-green-900/30',
-    text: 'text-green-700 dark:text-green-400',
+    text: 'text-green-700 dark:text-green-400 font-bold',
     border: 'border-green-500',
     icon: 'text-green-500'
   }
@@ -44,9 +44,9 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
     const daysLeft = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
     
     if (task.status === 'DONE') return null;
-    if (daysLeft < 0) return { text: 'Overdue!', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/20' };
-    if (daysLeft === 0) return { text: 'Due today!', color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900/20' };
-    if (daysLeft <= 2) return { text: `${daysLeft} days left`, color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/20' };
+    if (daysLeft < 0) return { text: 'Overdue!', color: 'text-red-600 dark:text-red-400 font-semibold', bg: 'bg-red-50 dark:bg-red-900/20' };
+    if (daysLeft === 0) return { text: 'Due today!', color: 'text-orange-600 dark:text-orange-400 font-semibold', bg: 'bg-orange-50 dark:bg-orange-900/20' };
+    if (daysLeft <= 2) return { text: `${daysLeft} days left`, color: 'text-yellow-600 dark:text-yellow-400 font-semibold', bg: 'bg-yellow-50 dark:bg-yellow-900/20' };
     return null;
   };
 
@@ -60,12 +60,12 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
       <div className="flex items-center justify-between mb-3">
         <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${priorityStyle.bg}`}>
           <FiFlag className={`h-3 w-3 ${priorityStyle.icon}`} />
-          <span className={`text-xs font-medium ${priorityStyle.text}`}>{priority}</span>
+          <span className={`text-xs font-bold ${priorityStyle.text}`}>{priority}</span>
         </div>
         {dueDateStatus && (
           <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${dueDateStatus.bg}`}>
-            <FiAlertCircle className={`h-3 w-3 ${dueDateStatus.color}`} />
-            <span className={`text-xs font-medium ${dueDateStatus.color}`}>{dueDateStatus.text}</span>
+            <FiAlertCircle className={`h-3 w-3 ${dueDateStatus.color.split(' ')[0]}`} />
+            <span className={`text-xs ${dueDateStatus.color}`}>{dueDateStatus.text}</span>
           </div>
         )}
       </div>
@@ -113,7 +113,7 @@ const TaskCard = ({ task, onUpdateStatus, nextStatus, prevStatus }) => {
         {nextStatus && (
           <button
             onClick={() => onUpdateStatus(task.id, nextStatus)}
-            className={`flex-1 px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center justify-center gap-1 shadow-md ${
+            className={`flex-1 px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center justify-center gap-1 shadow-md font-semibold ${
               darkMode 
                 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' 
                 : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
