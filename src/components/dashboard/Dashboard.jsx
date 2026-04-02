@@ -3,7 +3,7 @@ import StatsCard from './StatsCard';
 import dashboardService from '../../services/dashboardService';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useTheme } from '../../context/ThemeContext';
-import { FiRefreshCw, FiTrendingUp, FiAward, FiTarget, FiStar, FiZap, FiSun, FiMoon, FiSparkles } from 'react-icons/fi';
+import { FiRefreshCw, FiTrendingUp, FiAward, FiTarget, FiStar, FiZap, FiSun, FiSmile, FiFlag } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
@@ -375,7 +375,7 @@ const Dashboard = () => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-green-500 rounded-full blur-md opacity-50"></div>
                   <div className="relative w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
-                    <FiAward className="h-6 w-6 text-white" />
+                    <FiFlag className="h-6 w-6 text-white" />
                   </div>
                 </div>
                 <div className="flex-1">
@@ -402,7 +402,7 @@ const Dashboard = () => {
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                <FiSparkles className="h-12 w-12 mx-auto text-gray-400 mb-3" />
+                <FiSmile className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                 <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   Complete your first task to earn achievements! 🎯
                 </p>
