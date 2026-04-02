@@ -4,7 +4,7 @@ import CreateProjectModal from './CreateProjectModal';
 import AddMemberModal from './AddMemberModal';
 import projectService from '../../services/projectService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';  // Add FiFolder here
+import { FiPlus, FiFolder } from 'react-icons/fi';
 import { useTheme } from '../../context/ThemeContext';
 
 const Projects = () => {
@@ -71,11 +71,15 @@ const Projects = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="p-6 animate-fade-in">
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-1">Manage your projects and team members</p>
+          <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            Projects
+          </h1>
+          <p className={`mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            Manage your projects and team members
+          </p>
         </div>
         {isAdmin && (
           <button
@@ -89,18 +93,24 @@ const Projects = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl">
           {error}
         </div>
       )}
 
       {projects.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-            <FiFolder className="h-8 w-8 text-gray-400" />
+        <div className="text-center py-12 animate-fade-in">
+          <div className={`rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center ${
+            darkMode ? 'bg-gray-800' : 'bg-gray-100'
+          }`}>
+            <FiFolder className={`h-10 w-10 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
-          <p className="text-gray-500">Create your first project to get started</p>
+          <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            No projects yet
+          </h3>
+          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            Create your first project to get started
+          </p>
           {isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
