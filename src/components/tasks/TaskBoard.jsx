@@ -1,22 +1,20 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { DndContext, DragOverlay, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
+import { DndContext, closestCorners, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import TaskColumn from './TaskColumn';
 import CreateTaskModal from './CreateTaskModal';
 import taskService from '../../services/taskService';
 import projectService from '../../services/projectService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { FiPlus, FiSearch, FiFilter, FiX } from 'react-icons/fi';
+import { FiPlus, FiSearch, FiFilter, FiX, FiInbox, FiSmile } from 'react-icons/fi';
 import { triggerConfetti } from '../../utils/confetti';
+import { useTheme } from '../../context/ThemeContext';
 
 const TaskBoard = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectIdFromUrl = queryParams.get('projectId');
-
+  
   const [tasks, setTasks] = useState({ TO_DO: [], IN_PROGRESS: [], DONE: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,9 +25,10 @@ const TaskBoard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-
+  
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user?.role?.includes('ADMIN');
+  const { darkMode } = useTheme(); // <-- Make sure this is here!
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -57,32 +56,38 @@ const TaskBoard = () => {
         const data = await projectService.getAllUsers();
         setUsers(data);
       } catch (err) {
-        console.error('Failed to load users', err);
+        console.error('Failed to load users');
       }
     }
   };
 
   const fetchTasks = async () => {
     if (!selectedProjectId) return;
-
+    
     try {
       setLoading(true);
       const data = await taskService.getTasksByProject(selectedProjectId);
-
-      // Filter tasks based on search and priority
+      
+      // Filter tasks based on user role
       let filteredTasks = data;
-
+      if (!isAdmin) {
+        // Members only see tasks assigned to them
+        filteredTasks = data.filter(task => task.assignee?.id === user.id);
+      }
+      
+      // Apply search filter
       if (searchTerm) {
-        filteredTasks = filteredTasks.filter(task =>
+        filteredTasks = filteredTasks.filter(task => 
           task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
-
+      
+      // Apply priority filter
       if (filterPriority) {
         filteredTasks = filteredTasks.filter(task => task.priority === filterPriority);
       }
-
+      
       const grouped = {
         TO_DO: filteredTasks.filter(task => task.status === 'TO_DO'),
         IN_PROGRESS: filteredTasks.filter(task => task.status === 'IN_PROGRESS'),
@@ -109,28 +114,26 @@ const TaskBoard = () => {
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-
+    
     if (!over) return;
-
+    
     const activeId = active.id;
     const newStatus = over.id;
-
-    // Find the task
+    
     let taskToUpdate = null;
     for (const status in tasks) {
       taskToUpdate = tasks[status].find(t => t.id === activeId);
       if (taskToUpdate) break;
     }
-
+    
     if (taskToUpdate && taskToUpdate.status !== newStatus) {
       try {
         await taskService.updateTaskStatus(activeId, newStatus);
-
-        // If task is being marked as DONE, trigger confetti
+        
         if (newStatus === 'DONE') {
           triggerConfetti();
         }
-
+        
         fetchTasks();
       } catch (err) {
         alert('Failed to update task status');
@@ -141,12 +144,11 @@ const TaskBoard = () => {
   const handleUpdateStatus = async (taskId, newStatus) => {
     try {
       await taskService.updateTaskStatus(taskId, newStatus);
-
-      // If task is being marked as DONE, trigger confetti
+      
       if (newStatus === 'DONE') {
         triggerConfetti();
       }
-
+      
       fetchTasks();
     } catch (err) {
       alert('Failed to update task status');
@@ -154,10 +156,6 @@ const TaskBoard = () => {
   };
 
   const handleCreateTask = async (taskData) => {
-
-    console.log("Received task data:", taskData); // ADD THIS LINE
-    console.log("Priority received:", taskData.priority); // ADD THIS LINE
-
     try {
       await taskService.createTask(selectedProjectId, taskData);
       setIsCreateModalOpen(false);
@@ -172,17 +170,19 @@ const TaskBoard = () => {
     setFilterPriority('');
   };
 
+  // Check if user has any tasks
+  const hasNoTasks = !isAdmin && 
+    tasks.TO_DO.length === 0 && 
+    tasks.IN_PROGRESS.length === 0 && 
+    tasks.DONE.length === 0;
+
   if (loading && projects.length === 0) return <LoadingSpinner />;
 
   const currentProject = projects.find(p => p.id === parseInt(selectedProjectId));
 
   return (
-    <div className="p-6 animate-fade-in">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        {/* <div>
-          <h1 className="text-3xl font-bold gradient-text">Task Board</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1"></p>
-        </div> */}
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
             Task Board
@@ -205,7 +205,7 @@ const TaskBoard = () => {
               </option>
             ))}
           </select>
-
+          
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="btn-secondary flex items-center gap-2"
@@ -216,7 +216,7 @@ const TaskBoard = () => {
               <span className="ml-1 w-2 h-2 bg-blue-500 rounded-full"></span>
             )}
           </button>
-
+          
           {selectedProjectId && isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
@@ -231,10 +231,12 @@ const TaskBoard = () => {
 
       {/* Search and Filters */}
       {showFilters && (
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl animate-slide-up">
+        <div className={`p-4 rounded-xl transition-all duration-300 ${
+          darkMode ? 'bg-gray-800/50' : 'bg-gray-50'
+        } animate-slide-up`}>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FiSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
               <input
                 type="text"
                 placeholder="Search tasks..."
@@ -250,15 +252,19 @@ const TaskBoard = () => {
                 className="input-field"
               >
                 <option value="">All Priorities</option>
-                <option value="HIGH">High Priority</option>
-                <option value="MEDIUM">Medium Priority</option>
-                <option value="LOW">Low Priority</option>
+                <option value="HIGH">🔴 High Priority</option>
+                <option value="MEDIUM">🟡 Medium Priority</option>
+                <option value="LOW">🟢 Low Priority</option>
               </select>
             </div>
             {(searchTerm || filterPriority) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-red-600 transition-colors flex items-center gap-2"
+                className={`px-4 py-2 rounded-xl transition-colors flex items-center gap-2 ${
+                  darkMode 
+                    ? 'text-gray-400 hover:text-red-400' 
+                    : 'text-gray-600 hover:text-red-600'
+                }`}
               >
                 <FiX className="h-4 w-4" />
                 Clear
@@ -269,14 +275,47 @@ const TaskBoard = () => {
       )}
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl mb-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl">
           {error}
         </div>
       )}
 
       {!selectedProjectId ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">Please select a project to view tasks</p>
+          <div className={`rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center ${
+            darkMode ? 'bg-gray-800' : 'bg-gray-100'
+          }`}>
+            <FiInbox className={`h-10 w-10 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+          </div>
+          <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            No Project Selected
+          </h3>
+          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            Please select a project to view tasks
+          </p>
+        </div>
+      ) : hasNoTasks ? (
+        // No Tasks Message for Members
+        <div className="text-center py-16 animate-fade-in">
+          <div className={`rounded-full p-6 w-32 h-32 mx-auto mb-6 flex items-center justify-center ${
+            darkMode ? 'bg-gray-800' : 'bg-gray-100'
+          }`}>
+            <FiSmile className={`h-16 w-16 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+          </div>
+          <h3 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            No Tasks Assigned Yet! 🎉
+          </h3>
+          <p className={`text-lg mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            You don't have any tasks in <span className="font-semibold text-indigo-600 dark:text-indigo-400">{currentProject?.name}</span>
+          </p>
+          <div className={`max-w-md mx-auto p-4 rounded-xl ${
+            darkMode ? 'bg-gray-800/50' : 'bg-indigo-50'
+          }`}>
+            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              💡 When tasks are assigned to you, they will appear here. 
+              You can then drag them between columns as you make progress!
+            </p>
+          </div>
         </div>
       ) : (
         <DndContext

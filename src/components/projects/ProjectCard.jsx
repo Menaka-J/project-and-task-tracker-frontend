@@ -8,30 +8,30 @@ const ProjectCard = ({ project, isAdmin, onAddMember }) => {
   const { darkMode } = useTheme();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:scale-[1.02] group">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:scale-[1.02] group">
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className={`text-lg font-semibold mb-1 text-gray-900 dark:text-white`}>
+          <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-white">
             {project.name}
           </h3>
-          <p className={`text-sm line-clamp-2 text-gray-600 dark:text-gray-400`}>
+          <p className="text-sm line-clamp-2 text-gray-600 dark:text-gray-400">
             {project.description || 'No description'}
           </p>
         </div>
         <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full px-2 py-1 ml-2">
-          <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+          <span className="text-xs font-medium text-blue-700 dark:text-blue-400">
             {project.totalTasks || 0} tasks
           </span>
         </div>
       </div>
 
       <div className="space-y-3">
-        <div className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400`}>
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           <FiUsers className="h-4 w-4" />
           <span>{project.members?.length || 1} members</span>
         </div>
 
-        <div className={`flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400`}>
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
           <FiCalendar className="h-4 w-4" />
           <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
         </div>
@@ -39,7 +39,7 @@ const ProjectCard = ({ project, isAdmin, onAddMember }) => {
         <div className="flex flex-wrap gap-2 pt-2">
           <button
             onClick={() => navigate(`/tasks?projectId=${project.id}`)}
-            className="flex-1 bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
           >
             View Tasks
             <FiChevronRight className="h-4 w-4" />
