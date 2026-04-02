@@ -11,7 +11,7 @@
 //   const location = useLocation();
 //   const queryParams = new URLSearchParams(location.search);
 //   const projectIdFromUrl = queryParams.get('projectId');
-  
+
 //   const [tasks, setTasks] = useState({ TO_DO: [], IN_PROGRESS: [], DONE: [] });
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState('');
@@ -19,7 +19,7 @@
 //   const [selectedProjectId, setSelectedProjectId] = useState(projectIdFromUrl || '');
 //   const [projects, setProjects] = useState([]);
 //   const [users, setUsers] = useState([]);
-  
+
 //   const user = JSON.parse(localStorage.getItem('user') || '{}');
 //   const isAdmin = user?.role?.includes('ADMIN');
 
@@ -48,7 +48,7 @@
 
 //   const fetchTasks = async () => {
 //     if (!selectedProjectId) return;
-    
+
 //     try {
 //       setLoading(true);
 //       const data = await taskService.getTasksByProject(selectedProjectId);
@@ -106,7 +106,7 @@
 //           <h1 className="text-2xl font-bold text-gray-900">Task Board</h1>
 //           <p className="text-gray-600 mt-1">Drag and drop tasks to update status</p>
 //         </div>
-        
+
 //         <div className="flex gap-3">
 //           <select
 //             value={selectedProjectId}
@@ -120,7 +120,7 @@
 //               </option>
 //             ))}
 //           </select>
-          
+
 //           {selectedProjectId && isAdmin && (
 //             <button
 //               onClick={() => setIsCreateModalOpen(true)}
@@ -198,7 +198,7 @@ const TaskBoard = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectIdFromUrl = queryParams.get('projectId');
-  
+
   const [tasks, setTasks] = useState({ TO_DO: [], IN_PROGRESS: [], DONE: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -209,7 +209,7 @@ const TaskBoard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isAdmin = user?.role?.includes('ADMIN');
 
@@ -239,32 +239,32 @@ const TaskBoard = () => {
         const data = await projectService.getAllUsers();
         setUsers(data);
       } catch (err) {
-        console.error('Failed to load users',err);
+        console.error('Failed to load users', err);
       }
     }
   };
 
   const fetchTasks = async () => {
     if (!selectedProjectId) return;
-    
+
     try {
       setLoading(true);
       const data = await taskService.getTasksByProject(selectedProjectId);
-      
+
       // Filter tasks based on search and priority
       let filteredTasks = data;
-      
+
       if (searchTerm) {
-        filteredTasks = filteredTasks.filter(task => 
+        filteredTasks = filteredTasks.filter(task =>
           task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           task.description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
-      
+
       if (filterPriority) {
         filteredTasks = filteredTasks.filter(task => task.priority === filterPriority);
       }
-      
+
       const grouped = {
         TO_DO: filteredTasks.filter(task => task.status === 'TO_DO'),
         IN_PROGRESS: filteredTasks.filter(task => task.status === 'IN_PROGRESS'),
@@ -291,28 +291,28 @@ const TaskBoard = () => {
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-    
+
     if (!over) return;
-    
+
     const activeId = active.id;
     const newStatus = over.id;
-    
+
     // Find the task
     let taskToUpdate = null;
     for (const status in tasks) {
       taskToUpdate = tasks[status].find(t => t.id === activeId);
       if (taskToUpdate) break;
     }
-    
+
     if (taskToUpdate && taskToUpdate.status !== newStatus) {
       try {
         await taskService.updateTaskStatus(activeId, newStatus);
-        
+
         // If task is being marked as DONE, trigger confetti
         if (newStatus === 'DONE') {
           triggerConfetti();
         }
-        
+
         fetchTasks();
       } catch (err) {
         alert('Failed to update task status');
@@ -323,12 +323,12 @@ const TaskBoard = () => {
   const handleUpdateStatus = async (taskId, newStatus) => {
     try {
       await taskService.updateTaskStatus(taskId, newStatus);
-      
+
       // If task is being marked as DONE, trigger confetti
       if (newStatus === 'DONE') {
         triggerConfetti();
       }
-      
+
       fetchTasks();
     } catch (err) {
       alert('Failed to update task status');
@@ -336,6 +336,10 @@ const TaskBoard = () => {
   };
 
   const handleCreateTask = async (taskData) => {
+
+    console.log("Received task data:", taskData); // ADD THIS LINE
+    console.log("Priority received:", taskData.priority); // ADD THIS LINE
+
     try {
       await taskService.createTask(selectedProjectId, taskData);
       setIsCreateModalOpen(false);
@@ -361,7 +365,7 @@ const TaskBoard = () => {
           <h1 className="text-3xl font-bold gradient-text">Task Board</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Drag and drop tasks to update status</p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
           <select
             value={selectedProjectId}
@@ -375,7 +379,7 @@ const TaskBoard = () => {
               </option>
             ))}
           </select>
-          
+
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="btn-secondary flex items-center gap-2"
@@ -386,7 +390,7 @@ const TaskBoard = () => {
               <span className="ml-1 w-2 h-2 bg-blue-500 rounded-full"></span>
             )}
           </button>
-          
+
           {selectedProjectId && isAdmin && (
             <button
               onClick={() => setIsCreateModalOpen(true)}
