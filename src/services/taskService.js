@@ -21,7 +21,7 @@ const taskService = {
     });
     return response.data;
   },
-  
+
   updateTaskStatus: async (taskId, status) => {
     const response = await api.put(`/tasks/${taskId}`, { status });
     return response.data;
@@ -31,6 +31,13 @@ const taskService = {
     const response = await api.get(`/tasks/project/${projectId}/status/${status}`);
     return response.data;
   },
+
+  // Add delete task method
+  deleteTask: async (taskId) => {
+    const response = await api.delete(`/tasks/${taskId}`);
+    return response.data;
+  },
+  
 };
 
 export default taskService;
