@@ -179,11 +179,19 @@ const TaskBoard = () => {
   return (
     <div className="p-6 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <div>
+        {/* <div>
           <h1 className="text-3xl font-bold gradient-text">Task Board</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1"></p>
+        </div> */}
+        <div>
+          <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            Task Board
+          </h1>
+          <p className={`mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            {isAdmin ? 'Drag and drop tasks to update status' : 'View and manage your assigned tasks'}
+          </p>
         </div>
-
+        
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
           <select
             value={selectedProjectId}
